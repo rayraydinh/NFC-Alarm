@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity {
         if(nfcAdapter!=null && nfcAdapter.isEnabled()){
 
         } else {
-            finish();
+            Toast.makeText(this, "NFC is Off", Toast.LENGTH_LONG).show();
         }
     }
 
