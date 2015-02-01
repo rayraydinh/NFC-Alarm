@@ -32,7 +32,7 @@ public class AlarmManagerHelper extends BroadcastReceiver {
 
         Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         MediaPlayer mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
         try {
             mediaPlayer.setDataSource(context, alert);
             mediaPlayer.prepare();

@@ -1,14 +1,30 @@
 package com.clv69.alarmnfc;
 
 import android.app.DialogFragment;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    NfcAdapter nfcAdapter;
 
     private android.support.v7.widget.Toolbar toolbar;
 
@@ -24,8 +40,54 @@ public class MainActivity extends ActionBarActivity {
 
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if(nfcAdapter!=null && nfcAdapter.isEnabled()){
+
+        } else {
+            finish();
+        }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+
+
+
+        Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.cancel();
+
+        Toast.makeText(getApplicationContext(), "Alarm stopping...", Toast.LENGTH_LONG).show();
+
+        Intent intent2 = new Intent(Intent.ACTION_MAIN);
+        intent2.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent2);
+
+        super.onNewIntent(intent);
+    }
+
+    @Override
+    protected void onResume() {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_RECEIVER_REPLACE_PENDING);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        IntentFilter[] intentfilter = new IntentFilter[]{};
+
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, intentfilter, null);
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+
+        nfcAdapter.disableForegroundDispatch(this);
+
+        super.onPause();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
